@@ -3,6 +3,7 @@ import 'package:flutter_application_1/feed/domain/models/films_models.dart';
 import 'package:flutter_application_1/feed/domain/services/films_api_service.dart';
 import 'package:flutter_application_1/feed/widgets/rating_widget.dart';
 import 'package:flutter_application_1/feed/widgets/similars_widget.dart';
+import 'package:flutter_application_1/feed/widgets/youtube_player_widget.dart';
 
 class FilmDetailedScreen extends StatefulWidget {
   final int id;
@@ -144,6 +145,8 @@ class FilmDetailedState extends State<FilmDetailedScreen> {
                               fontWeight: FontWeight.bold, fontSize: 24),
                         ),
                         Similars(similars: film.similar),
+                        if (film.trailerUrl.isNotEmpty)
+                          YoutubePlayerWidget(url: film.trailerUrl)
                       ],
                     ),
                   )

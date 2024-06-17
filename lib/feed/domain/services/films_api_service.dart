@@ -45,19 +45,22 @@ Future<FilmDetailed> fetchFilmDetailed(int id) async {
   const String baseURL = 'https://kinopoiskapiunofficial.tech/api';
   String apiKey = 'f693083c-4816-48be-98f0-fe811da4b553';
   final header = <String, String>{'X-API-KEY': apiKey};
-  
-  
+
   final urlDetailed = Uri.parse('$baseURL/v2.2/films/$id');
   final urlSimiral = Uri.parse('$baseURL/v2.2/films/$id/similars');
   final urlBoxOffice = Uri.parse('$baseURL/v2.2/films/$id/box_office');
-  
+  final urlVideos = Uri.parse('$baseURL/v2.2/films/$id/videos');
+
   // final header = ;
   final responseDetailed = await http.get(urlDetailed, headers: header);
   final responseSimilar = await http.get(urlSimiral, headers: header);
-  final responseBoxOffice = await http.get(urlBoxOffice, headers:  header);
+  final responseBoxOffice = await http.get(urlBoxOffice, headers: header);
+  final responseVideos = await http.get(urlVideos, headers: header);
 
-  final success =
-      responseSimilar.statusCode == 200 && responseDetailed.statusCode == 200 && responseBoxOffice.statusCode == 200;
+  final success = responseSimilar.statusCode == 200 &&
+      responseDetailed.statusCode == 200 &&
+      responseVideos.statusCode == 200 &&
+      responseBoxOffice.statusCode == 200;
 
   if (success) {
     // If the server did return a 200 OK response,
@@ -66,10 +69,12 @@ Future<FilmDetailed> fetchFilmDetailed(int id) async {
         json.decode(utf8.decode(responseDetailed.bodyBytes)) as dynamic;
     final similar =
         json.decode(utf8.decode(responseSimilar.bodyBytes)) as dynamic;
-    final boxOffice = 
+    final boxOffice =
         json.decode(utf8.decode(responseBoxOffice.bodyBytes)) as dynamic;
+    final videos =
+        json.decode(utf8.decode(responseVideos.bodyBytes)) as dynamic;
 
-    return FilmDetailed.fromJson(detailed, similar, boxOffice);
+    return FilmDetailed.fromJson(detailed, similar, boxOffice, videos);
   } else {
     throw Exception('Could not fetch film');
   }

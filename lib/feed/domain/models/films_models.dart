@@ -67,11 +67,16 @@ class FilmDetailed {
     required this.similar,
   });
 
-  factory FilmDetailed.fromJson(Map<String, dynamic> detailedJson,
-      Map<String, dynamic> similarJson, Map<String, dynamic> boxOfficeJson) {
+  factory FilmDetailed.fromJson(
+      Map<String, dynamic> detailedJson,
+      Map<String, dynamic> similarJson,
+      Map<String, dynamic> boxOfficeJson,
+      Map<String, dynamic> videosJson) {
     final similarItems = similarJson['items'] as List<dynamic>;
     final boxOfficeItems = boxOfficeJson['items'] as List<dynamic>;
+    final videosItems = videosJson['items'] as List<dynamic>;
     // final boxOfficeWorld = boxOfficeItems[''];
+
     List<FilmCard> similars = similarItems
         .map((e) => FilmCard.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -81,7 +86,12 @@ class FilmDetailed {
         .firstWhere((item) => item['type'] == "USA", orElse: () => null);
     final boxOfficeRus = boxOfficeItems
         .firstWhere((item) => item['type'] == "RUS", orElse: () => null);
+    final trailerUrlItem = videosItems.firstWhere(
+      (item) => item['site'] == 'YOUTUBE',
+      orElse: () => null,
+    );
 
+    final trailerUrl = trailerUrlItem != null ? trailerUrlItem['url'] : '';
     return FilmDetailed(
         id: detailedJson['kinopoiskId'] ?? detailedJson['filmId'],
         title: detailedJson['nameRu'] ??
@@ -95,12 +105,21 @@ class FilmDetailed {
                 ? detailedJson['genres']
                 : "",
         img: detailedJson['posterUrlPreview'],
-        trailerUrl: '',
+        trailerUrl: trailerUrl,
         ratingKinopoisk: detailedJson['ratingKinopoisk'] ?? 0.0,
         ratingImdb: detailedJson['ratingImdb'] ?? 0.0,
-        boxOfficeWorld: convertMoney((boxOfficeWorld != null && boxOfficeWorld['amount'] != null) ? boxOfficeWorld['amount'] : 0),
-        boxOfficeUSA: convertMoney((boxOfficeUSA != null && boxOfficeUSA['amount'] != null) ? boxOfficeUSA['amount'] : 0),
-        boxOfficeRus: convertMoney((boxOfficeRus != null && boxOfficeRus['amount'] != null) ? boxOfficeRus['amount'] : 0),
+        boxOfficeWorld: convertMoney(
+            (boxOfficeWorld != null && boxOfficeWorld['amount'] != null)
+                ? boxOfficeWorld['amount']
+                : 0),
+        boxOfficeUSA: convertMoney(
+            (boxOfficeUSA != null && boxOfficeUSA['amount'] != null)
+                ? boxOfficeUSA['amount']
+                : 0),
+        boxOfficeRus: convertMoney(
+            (boxOfficeRus != null && boxOfficeRus['amount'] != null)
+                ? boxOfficeRus['amount']
+                : 0),
         similar: similars);
   }
 }
